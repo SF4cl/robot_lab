@@ -8,8 +8,8 @@ from isaaclab_rl.rsl_rl import RslRlOnPolicyRunnerCfg, RslRlPpoActorCriticCfg, R
 @configclass
 class Go2X5RoughPPORunnerCfg(RslRlOnPolicyRunnerCfg):
     num_steps_per_env = 24
-    max_iterations = 1000
-    save_interval = 10
+    max_iterations = 20000
+    save_interval = 2000
     experiment_name = "go2_x5_rough"
     policy = RslRlPpoActorCriticCfg(
         init_noise_std=1.0,
