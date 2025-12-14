@@ -41,23 +41,40 @@ GO2_X5_CFG = ArticulationCfg(
     init_state=ArticulationCfg.InitialStateCfg(
         pos=(0.0, 0.0, 0.38),
         joint_pos={
+            # 机器狗关节
             ".*L_hip_joint": 0.0,
             ".*R_hip_joint": -0.0,
             "F.*_thigh_joint": 0.8,
             "R.*_thigh_joint": 0.8,
             ".*_calf_joint": -1.5,
+            # 机械臂关节
+            "arm_joint1": 0.0,      
+            "arm_joint2": 0.0,     
+            "arm_joint3": 0.0,     
+            "arm_joint4": 0.0,      
+            "arm_joint5": 0.0,      
+            "arm_joint6": 0.0,      
         },
         joint_vel={".*": 0.0},
     ),
     soft_joint_pos_limit_factor=0.9,
     actuators={
         "legs": DCMotorCfg(
-            joint_names_expr=[".*"],
+            joint_names_expr=[".*_hip_joint", ".*_thigh_joint", ".*_calf_joint"],
             effort_limit=23.5,
             saturation_effort=23.5,
             velocity_limit=30.0,
             stiffness=25.0,
             damping=0.5,
+            friction=0.0,
+        ),
+        "arm": DCMotorCfg(
+            joint_names_expr=["arm_joint.*"],
+            effort_limit=100.0,
+            saturation_effort=100.0,
+            velocity_limit=30.0,
+            stiffness=500.0,
+            damping=50.0,
             friction=0.0,
         ),
     },

@@ -19,13 +19,21 @@ class Go2X5RoughEnvCfg(LocomotionVelocityRoughEnvCfg):
     base_link_name = "base"
     foot_link_name = ".*_foot"
     # fmt: off
-    joint_names = [
+    dog_joint_names = [
         "FR_hip_joint", "FR_thigh_joint", "FR_calf_joint",
         "FL_hip_joint", "FL_thigh_joint", "FL_calf_joint",
         "RR_hip_joint", "RR_thigh_joint", "RR_calf_joint",
         "RL_hip_joint", "RL_thigh_joint", "RL_calf_joint",
     ]
+    arm_joint_names = [
+        "arm_joint1", "arm_joint2", "arm_joint3", 
+        "arm_joint4", "arm_joint5", "arm_joint6",
+    ]
     # fmt: on
+
+    joint_names = dog_joint_names + arm_joint_names
+
+    arm_target_positions = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 
     def __post_init__(self):
         # post init of parent
@@ -33,6 +41,14 @@ class Go2X5RoughEnvCfg(LocomotionVelocityRoughEnvCfg):
 
         # ------------------------------Sence------------------------------
         self.scene.robot = GO2_X5_CFG.replace(prim_path="{ENV_REGEX_NS}/Robot")
+        self.scene.robot.init_state.joint_pos.update({
+            "arm_joint1": self.arm_target_positions[0],
+            "arm_joint2": self.arm_target_positions[1],
+            "arm_joint3": self.arm_target_positions[2],
+            "arm_joint4": self.arm_target_positions[3],
+            "arm_joint5": self.arm_target_positions[4],
+            "arm_joint6": self.arm_target_positions[5],
+        })
         self.scene.height_scanner.prim_path = "{ENV_REGEX_NS}/Robot/" + self.base_link_name
         self.scene.height_scanner_base.prim_path = "{ENV_REGEX_NS}/Robot/" + self.base_link_name
 
@@ -43,14 +59,14 @@ class Go2X5RoughEnvCfg(LocomotionVelocityRoughEnvCfg):
         self.observations.policy.joint_vel.scale = 0.05
         self.observations.policy.base_lin_vel = None
         self.observations.policy.height_scan = None
-        self.observations.policy.joint_pos.params["asset_cfg"].joint_names = self.joint_names
-        self.observations.policy.joint_vel.params["asset_cfg"].joint_names = self.joint_names
+        self.observations.policy.joint_pos.params["asset_cfg"].joint_names = self.dog_joint_names
+        self.observations.policy.joint_vel.params["asset_cfg"].joint_names = self.dog_joint_names
 
         # ------------------------------Actions------------------------------
         # reduce action scale
         self.actions.joint_pos.scale = {".*_hip_joint": 0.125, "^(?!.*_hip_joint).*": 0.25}
         self.actions.joint_pos.clip = {".*": (-100.0, 100.0)}
-        self.actions.joint_pos.joint_names = self.joint_names
+        self.actions.joint_pos.joint_names = self.dog_joint_names
 
         # ------------------------------Events------------------------------
         self.events.randomize_reset_base.params = {
